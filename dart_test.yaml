@@ -1,0 +1,9 @@
+concurrency: 1
+
+tags:
+  Security:
+    retry: 0
+  Functional:
+    retry: 0
+  Robustness:
+    retry: 0
