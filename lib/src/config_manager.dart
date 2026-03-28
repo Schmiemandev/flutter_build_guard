@@ -6,11 +6,20 @@ import 'security_scanner.dart';
 
 /// Represents the global security policy for the scanner.
 class ScannerConfig {
+  /// Whether the scanner should exit with a failure code if a background
+  /// process (like Gradle) fails.
   final bool failOnProcessError;
+
+  /// Whether the scanner should stop immediately after the first failure.
   final bool stopOnFirstFail;
+
+  /// A map of Android rule IDs to their configurations.
   final Map<String, RuleConfig> androidRules;
+
+  /// A map of iOS rule IDs to their configurations.
   final Map<String, RuleConfig> iosRules;
 
+  /// Creates a [ScannerConfig] with the specified settings and rules.
   const ScannerConfig({
     this.failOnProcessError = true,
     this.stopOnFirstFail = false,
@@ -18,7 +27,7 @@ class ScannerConfig {
     this.iosRules = const {},
   });
 
-  /// Default strict policy if no config file exists.
+  /// Provides a default strict policy (used if no config file is found).
   factory ScannerConfig.defaultStrict() {
     return ConfigManager.parseYaml(defaultConfigYaml);
   }
@@ -26,21 +35,33 @@ class ScannerConfig {
 
 /// Individual rule configuration for enablement and severity.
 class RuleConfig {
+  /// Whether this rule is active during the scan.
   final bool enabled;
-  final String severity; // high, medium, low
+
+  /// The severity level of this rule (high, medium, or low).
+  final String severity;
+
+  /// A list of component names to exclude from this rule's validation.
   final List<String> ignoreComponents;
 
+  /// Creates a [RuleConfig] with the specified enablement and severity.
   const RuleConfig({
     this.enabled = true,
     this.severity = 'high',
     this.ignoreComponents = const [],
   });
 
+  /// Returns `true` if this rule is configured with 'high' severity.
   bool get isHighSeverity => severity.toLowerCase() == 'high';
 }
 
-/// ConfigManager handles loading and parsing of build_guard.yaml.
+/// ConfigManager handles loading and parsing of the `build_guard.yaml` file.
 class ConfigManager {
+  /// Loads the configuration from the current working directory.
+  ///
+  /// If `build_guard.yaml` is missing, it returns [ScannerConfig.defaultStrict].
+  /// It also automatically syncs any newly added rules into the existing
+  /// configuration file.
   static Future<ScannerConfig> load() async {
     final configFile = File(p.join(Directory.current.path, 'build_guard.yaml'));
 
@@ -127,6 +148,7 @@ class ConfigManager {
     return modified;
   }
 
+  /// Parses a raw YAML string into a [ScannerConfig] object.
   static ScannerConfig parseYaml(String yamlString) {
     final dynamic yaml = loadYaml(yamlString);
     if (yaml is! YamlMap) return const ScannerConfig();

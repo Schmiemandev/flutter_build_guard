@@ -13,11 +13,17 @@ const String green = '\x1B[32m';
 const String reset = '\x1B[0m';
 
 /// Orchestrates security validation against 2024 OWASP Mobile Top 10.
+///
+/// This class is the primary entry point for running security scans
+/// on both Android and iOS platform configurations.
 class SecurityScanner {
+  /// The configuration used for the security scan.
   final ScannerConfig config;
 
+  /// Creates a new [SecurityScanner] with the given [config].
   SecurityScanner(this.config);
 
+  /// A mapping of rule IDs to their corresponding [AndroidRule] implementations.
   static const Map<String, AndroidRule> androidRuleMap = {
     'backup_leaks': AndroidBackupRule(),
     'cleartext_traffic': AndroidCleartextRule(),
@@ -29,6 +35,7 @@ class SecurityScanner {
     'deep_link_hijacking': AndroidUniversalLinkRule(),
   };
 
+  /// A mapping of rule IDs to their corresponding [IOSRule] implementations.
   static const Map<String, IOSRule> iosRuleMap = {
     'insecure_network': IOSInsecureNetworkRule(),
     'deep_link_hijacking': IOSUniversalLinkRule(),
@@ -36,6 +43,13 @@ class SecurityScanner {
   };
 
   /// Validates Android Manifest using registered security rules.
+  ///
+  /// [path] is the file path to the merged AndroidManifest.xml.
+  /// [onFail], [onPass], and [onSkip] are callbacks for reporting scan results.
+  /// [verbose] enables detailed logging.
+  /// [attemptFix] triggers auto-remediation for supported rules.
+  ///
+  /// Returns `true` if any high-severity failures were detected.
   Future<bool> scanAndroid(
       String path,
       void Function(String, String, String, String) onFail,
@@ -95,6 +109,12 @@ class SecurityScanner {
   }
 
   /// Validates iOS Info.plist using registered security rules.
+  ///
+  /// [onFail], [onPass], and [onSkip] are callbacks for reporting scan results.
+  /// [verbose] enables detailed logging.
+  /// [attemptFix] triggers auto-remediation for supported rules.
+  ///
+  /// Returns `true` if any high-severity failures were detected.
   Future<bool> scanIOS(
       void Function(String, String, String, String) onFail,
       void Function(String, String) onPass,

@@ -3,7 +3,13 @@ import 'package:path/path.dart' as p;
 import 'package:xml/xml.dart';
 import 'base_rule.dart';
 
+/// Analyzes the AndroidManifest.xml for backup vulnerabilities.
+///
+/// This rule checks if `android:allowBackup` is set to `false`.
+/// If it's `true` or missing, it may allow sensitive app data to be
+/// extracted via ADB backup.
 class AndroidBackupRule extends AndroidRule implements FixableRule {
+  /// Default constructor for the backup rule.
   const AndroidBackupRule();
 
   @override
@@ -59,7 +65,10 @@ class AndroidBackupRule extends AndroidRule implements FixableRule {
   }
 
   @override
-  bool validate(XmlDocument document, config, onFail, onPass, onSkip,
+  bool validate(XmlDocument document, RuleConfig config,
+      void Function(String, String, String, String) onFail,
+      void Function(String, String) onPass,
+      void Function(String, String, String) onSkip,
       {bool verbose = false}) {
     final app = document.findAllElements('application').firstOrNull;
     if (app == null) {
