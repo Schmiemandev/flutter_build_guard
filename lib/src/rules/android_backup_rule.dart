@@ -65,7 +65,9 @@ class AndroidBackupRule extends AndroidRule implements FixableRule {
   }
 
   @override
-  bool validate(XmlDocument document, RuleConfig config,
+  bool validate(
+      XmlDocument document,
+      RuleConfig config,
       void Function(String, String, String, String) onFail,
       void Function(String, String) onPass,
       void Function(String, String, String) onSkip,
