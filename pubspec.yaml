@@ -1,6 +1,6 @@
 name: flutter_build_guard
 description: A CI/CD security scanner for Flutter native configurations.
-version: 1.0.0
+version: 1.0.1
 repository: https://github.com/schmiemandev/flutter_build_guard
 homepage: https://github.com/schmiemandev/flutter_build_guard
 
